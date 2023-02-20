@@ -32,3 +32,7 @@ yarn-error.log*
 .vercel
 
 .env
+cred.json
+token.json
+
+*.csv
