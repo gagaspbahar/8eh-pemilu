@@ -23,11 +23,11 @@
     "eslint-config-next": "13.1.6",
     "framer-motion": "^9.0.2",
     "googleapis": "105",
+    "jsonwebtoken": "^9.0.0",
     "next": "13.1.6",
     "nodemailer": "^6.9.1",
     "pg": "^8.9.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
-  },
-  "type": "module" 
+  }
 }

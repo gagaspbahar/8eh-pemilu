@@ -2,7 +2,7 @@ import { QueryOrRollback } from "./database";
 
 const getUserByEmail = async (email) => {
   const res = await QueryOrRollback(
-    "SELECT id, email, password FROM public.user WHERE email = $1",
+    "SELECT id, name, angkatan_kru email, password FROM public.user WHERE email = $1",
     [email]
   );
   return res;
