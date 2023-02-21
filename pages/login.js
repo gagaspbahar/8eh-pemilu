@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Flex,
@@ -13,11 +13,15 @@ import {
   Heading,
   Text,
   useColorModeValue,
+  useToast,
+  Spinner,
 } from "@chakra-ui/react";
 
 export default function SimpleCard() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
 
   const handleChangeEmail = (e) => {
     setEmail(e.target.value);
@@ -27,12 +31,30 @@ export default function SimpleCard() {
     setPassword(e.target.value);
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      window.location.href = "/vote";
+    }
+  },[])
+
   const handleSubmit = async () => {
+    setLoading(true);
     const res = await fetch("/api/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     })
     const resJson = await res.json();
+    if(resJson.message === "User not found") {
+      toast({
+        title: "User not found",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      })
+      setLoading(false);
+      return;
+    }
     localStorage.setItem("token", resJson.data.token);
     window.location.href = "/vote";
   };
@@ -74,6 +96,7 @@ export default function SimpleCard() {
               >
                 Sign in
               </Button>
+              {loading && <Spinner />}
             </Stack>
           </Stack>
         </Box>

@@ -101,8 +101,8 @@ function Vote() {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        width="100vw"
-        height="100vh"
+        // width="100vw"
+        // height="80vh"
         flexDirection="column"
       >
         <Text fontSize={"3xl"} fontWeight="bold" margin={5}>
@@ -117,11 +117,11 @@ function Vote() {
           <Box
             display="flex"
             flexDirection="column"
-            justifyContent="center"
+            // justifyContent="center"
             alignItems="center"
           >
-            <Image height="100px" width="100px" alt="gv" />
-            <Text textAlign="center">Grace Vania</Text>
+            <Image width="200px" alt="gv" src="https://cdn.discordapp.com/attachments/723179759453995072/1077584827311726602/gv.png" />
+            <Text textAlign="center" fontWeight={"bold"}>Ca-GM No. Urut 1: Grace Vania</Text>
             <Button variant="solid" size="md" onClick={() => handleSubmit(1)} disabled={disabled}>
               Vote
             </Button>
@@ -132,12 +132,13 @@ function Vote() {
             justifyContent="center"
             alignItems="center"
           >
-            <Image height="100px" width="100px" alt="kotak kosong" />
-            <Text textAlign="center">Kotak kosong</Text>
+            <Image width="200px" alt="kotak kosong" src="https://cdn.discordapp.com/attachments/723179759453995072/1077584845024272534/messageImage_1676977618829.jpg"/>
+            <Text textAlign="center" fontWeight={"bold"}>Kotak kosong</Text>
             <Button variant="solid" size="md" onClick={() => handleSubmit(2)} disabled={disabled}>
               Vote
             </Button>
           </Box>
+          <Spacer height={"10vh"}/>
         </Stack>
       </Container>
     </Box>
