@@ -2,7 +2,9 @@ const fs = require("fs");
 const sendMail = require("./gmail");
 const csv = require("csv-parser");
 const bcrypt = require("bcrypt");
-import { registerUser } from "../service/auth_service";
+const dotenv = require("dotenv");
+dotenv.config();
+const { Pool } = require("pg");
 
 
 const parseCSV = () => new Promise((resolve, reject) => {
@@ -14,6 +16,40 @@ const parseCSV = () => new Promise((resolve, reject) => {
       resolve(results);
     });
 })
+
+const QueryOrRollback = async (query, params) => {
+  const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+  });
+  let res;
+  const client = await pool.connect();
+  try {
+    res = await client.query('BEGIN');
+    try {
+      res = await client.query(query, params);
+      await client.query('COMMIT')
+    } catch (err) {
+      await client.query('ROLLBACK')
+      throw err
+    }
+  }
+  finally {
+    client.release()
+  }
+  return res;
+}
+
+const registerUser = async (email, password, name, angkatan_kru) => {
+  const res = await QueryOrRollback(
+    "INSERT INTO public.user(email, password, name, angkatan_kru) VALUES ($1, $2, $3, $4) RETURNING id",
+    [email, password, name, angkatan_kru]
+  );
+  return res.rows[0];
+};
 
 function generatePassword() {
   var length = 8,
@@ -29,13 +65,16 @@ const main = async () => {
   const results = await parseCSV();
   const messageIds = [];
   for (let i = 0; i < results.length; i++) {
-    const email = results[i].email;
+    let email = results[i].email;
     const name = results[i].nama;
     const angkatan = results[i].angkatan;
     const password = generatePassword();
     const hashedPassword = await bcrypt.hash(password, 10);
+    if (email == "") {
+      email = generatePassword() + "@dummyemail.com"
+    }
 
-    const id = await registerUser(email, hashedPassword);
+    const id = await registerUser(email, hashedPassword, name, angkatan);
 
     const options = {
       to: email,
@@ -55,7 +94,9 @@ const main = async () => {
       </p>
       <p>
           Password: ${password}
-      </p>`,
+      </p>
+      <a href="https://8eh-pemilu.vercel.app/login">Login</a>
+      `,
       textEncoding: "base64",
     };
 

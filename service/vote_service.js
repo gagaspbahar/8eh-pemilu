@@ -16,4 +16,11 @@ const getVote = async (id) => {
   return res;
 }
 
-export { vote, getVote };
+const countVote = async () => {
+  const res = await QueryOrRollback(
+    "SELECT COUNT(*) FROM public.vote",
+  );
+  return res;
+}
+
+export { vote, getVote, countVote };
